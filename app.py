@@ -1,0 +1,211 @@
+import streamlit as st
+# import pandas as pd
+import os
+import base64  # to enable writing to GitHub repo
+import requests  # ditto
+import random
+
+from datetime import datetime
+
+st.set_page_config(page_title="Comic Panel Experiment", layout="centered")
+st.title("🧠 Comic Panel Experiment")
+
+# === Participant Info Form ===
+if "age" not in st.session_state:
+    with st.form("participant_form"):
+        st.write("### Please tell us about yourself")
+        gender = st.selectbox("Gender:", ["Prefer not to say", "Female", "Male", "Other"], key="gender")
+        age = st.text_input("Your age:", key="age")
+        submit = st.form_submit_button(label="Start")
+        if not submit:
+            st.stop()
+
+# === assign participant number - this will be one more than the number in Participant.txt
+if "participant" not in st.session_state:
+    participant_file = "Participant.txt"
+    with open(participant_file, "r", encoding="utf-8") as in_f:
+        try:
+            participant = int(in_f.readline()) + 1
+        except ValueError:
+            participant = 1
+    st.session_state.participant = participant
+
+# Now update the Participant.txt file with the number of this participant
+    output_record = str(participant)
+    encoded_content = base64.b64encode(output_record.encode("utf-8")).decode("utf-8")
+
+    # My GitHub info
+    token = st.secrets["github"]["token"]
+    repo = "JulienHartley/KiuzTuB-project"
+    branch = "main"
+
+    api_url = f"https://api.github.com/repos/{repo}/contents/{participant_file}"
+
+    headers = {
+        "Authorization": f"token {token}",
+        "Accept": "application/vnd.github+json"
+    }
+
+    response = requests.get(api_url, headers=headers)
+    if response.status_code == 200:
+        file_info = response.json()
+        sha = file_info["sha"]
+    else:
+        st.error(f"Failed to fetch file info: {response.status_code}")
+        st.stop()
+
+    update_payload = {
+        "message": f"Update file via Streamlit {st.session_state.participant}",
+        "content": encoded_content,
+        "sha": sha,
+        "branch": branch
+    }
+# write the update request
+    update_response = requests.put(api_url, headers=headers, json=update_payload)
+    if update_response.status_code == 200:
+        st.success("✅ File updated successfully!")
+    else:
+        st.error(f"❌ Update failed: {update_response.status_code}")
+        st.json(update_response.json())
+
+    st.success(f"🧪 You are participant **{participant}**.")
+
+if "proceed" not in st.session_state:
+    with st.form("instructions_form"):
+        st.write("""
+        Welcome to our experiment!
+        
+        The purpose of the experiment is to compare human prediction in comics with the prediction of an AI Chatbot
+        
+        
+        You’ll view four pages from comics in each of which the last panel has been removed.
+        
+        After each page you will be asked what you think happens next (ie on the missing panel),
+        how confident you are in your answer, and what clues you used from the 5 panels.
+        
+        All responses are anonymous.  
+        """)
+        st.session_state.proceed = st.form_submit_button("Continue")
+        if not st.session_state.proceed:
+            st.stop()
+
+# === Load Images ===
+if "final_images" not in st.session_state:
+
+    #  first choose two items from the first 5 (the original comics)
+    item1 = random.randint(1, 5)  # includes both 1 and 5
+    item3 = item1
+    while item3 == item1:  # keep generating a random number until it is different from item1
+        item3 = random.randint(1, 5)
+
+    #  now choose two items from the second 5 (the created comics)
+    item2 = random.randint(6, 10)  # includes both 6 and 10
+    item4 = item2
+    while item4 == item2:  # keep generating a random number until it is different from item2
+        item3 = random.randint(6, 10)
+
+    st.session_state.final_images[1] = [f"panels{item1}.png"]
+    st.session_state.final_images[2] = [f"panels{item2}.png"]
+    st.session_state.final_images[3] = [f"panels{item3}.png"]
+    st.session_state.final_images[4] = [f"panels{item4}.png"]
+
+# === Loop through each comic ===
+# Initialize index in session state
+if "item_index" not in st.session_state:
+    st.session_state.item_index = 0
+
+item_number = st.session_state.item_index + 1
+item_number_str = str(item_number)
+
+# Show first item
+if "item_index" in st.session_state:
+    if st.session_state.item_index < 4:
+        with st.form(f"item_{item_number_str}"):
+            current_item = st.session_state.final_images[st.session_state.item_index]
+            st.image(os.path.join("Images", current_item))
+            st.session_state.item_index += 1
+            next_item = st.form_submit_button("Next")
+            if not next_item:
+                st.stop()
+            else:  # ask the questions that relate to the item
+                if "answer{item_index}" not in st.session_state:
+                    with st.form("response_form"):
+                        st.write("### Please type your responses to the question below ")
+                        answer = st.text_input("What do you think happens next?", key="answer{item_index}")
+                        submit = st.form_submit_button("Submit")
+                        if not submit:
+                            st.stop()
+
+                if "confidence{item_index}" not in st.session_state:
+                    with st.form("response_form2"):
+                        confidence = st.selectbox(
+                            "How confident do you feel about this on a scale of 1(low) to 10(certain)?",
+                            ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"], key="confidence{item_index}")
+                        submit = st.form_submit_button("Submit")
+                        if not submit:
+                            st.stop()
+
+                if "clues{item_index}" not in st.session_state:
+                    with st.form("response_form3"):
+                        st.write("### What clues (if any) did you use to reach your prediction? (enter up to 3)")
+                        answer = st.text_input("What clues did you use?", key="clues{item_index}")
+                        submit = st.form_submit_button("Submit")
+                        if not submit:
+                            st.stop()
+
+# -----------------
+# st.write("participant ", st.session_state.participant, "age ", st.session_state.age)
+# st.write("gender ", st.session_state.gender, "type ", st.session_state.testtype)
+# st.write("answer ", st.session_state.answer, "confidence ", st.session_state.confidence)
+# ------------------
+# === Now need to write to GitHub files
+if "answer4" in st.session_state:
+
+    # My GitHub info
+    token = st.secrets["github"]["token"]
+    repo = "JulienHartley/KiuzTuB"
+    branch = "main"
+
+    # === Save CSV
+    filename = "Results/" + f"response_{st.session_state.participant}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+# ........
+    api_url = f"https://api.github.com/repos/{repo}/contents/{filename}"
+    output_array = [str(st.session_state.participant),
+                    str(st.session_state.age),
+                    st.session_state.gender,
+                    st.session_state.answer1,
+                    str(st.session_state.confidence1),
+                    st.session_state.clues1,
+                    st.session_state.answer2,
+                    str(st.session_state.confidence2),
+                    st.session_state.clues2,
+                    st.session_state.answer3,
+                    str(st.session_state.confidence3),
+                    st.session_state.clues3,
+                    st.session_state.answer4,
+                    str(st.session_state.confidence4),
+                    st.session_state.clues4
+                    ]
+    output_record = ",".join(output_array)
+    encoded_content = base64.b64encode(output_record.encode("utf-8")).decode("utf-8")
+
+    headers = {
+        "Authorization": f"token {token}",
+        "Accept": "application/vnd.github+json"
+    }
+
+    data = {
+        "message": f"Add {filename}",
+        "content": encoded_content,
+        "branch": branch
+    }
+
+    response = requests.put(api_url, headers=headers, json=data)
+
+    if response.status_code == 201:
+        st.success("File created successfully!")
+    else:
+        st.error(f"Error: {response.status_code} - {response.json()}")
+
+
+st.success("✅ Thank you! Your responses have been recorded. You may close this browser window")
