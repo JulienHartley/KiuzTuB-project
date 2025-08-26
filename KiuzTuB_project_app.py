@@ -35,14 +35,15 @@ if "participant" not in st.session_state:
     encoded_content = base64.b64encode(output_record.encode("utf-8")).decode("utf-8")
 
     # My GitHub info
-    token = st.secrets["github"]["token"]
+    # Get GitHub token from secrets
+    github_token = st.secrets["GITHUB_TOKEN"]
     repo = "JulienHartley/KiuzTuB-project"
     branch = "main"
 
     api_url = f"https://api.github.com/repos/{repo}/contents/{participant_file}"
 
     headers = {
-        "Authorization": f"token {token}",
+        "Authorization": f"token {github_token}",
         "Accept": "application/vnd.github+json"
     }
 
