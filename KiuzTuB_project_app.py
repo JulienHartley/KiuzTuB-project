@@ -83,8 +83,8 @@ if "proceed" not in st.session_state:
         
         You’ll view four pages from comics in each of which the last panel has been removed.
         
-        After each page you will be asked what you think happens next (ie on the missing panel),
-        how confident you are in your answer, and what clues you used from the 5 panels.
+        After each page you will be asked what you think happens next,
+        how confident you are in your answer, and what clues you used (these may be textual or visual).
         
         All responses are anonymous.  
         """)
@@ -107,7 +107,7 @@ if "final_images" not in st.session_state:
     item4 = item2
     while item4 == item2:  # keep generating a random number until it is different from item2
         item4 = random.randint(6, 10)
-    st.write(f"The original items for this participant are {item2} and {item4}")
+    st.write(f"The created items for this participant are {item2} and {item4}")
 
     item1_panels = [f"panels{item1}.png"]
     item2_panels = [f"panels{item2}.png"]
@@ -130,6 +130,8 @@ if "item_index" in st.session_state:
     if st.session_state.item_index < 5:
         with st.form(f"item_{item_number_str}"):
             current_item = st.session_state.final_images[st.session_state.item_index]
+            st.write(f"The image to be shown is {current_item}")
+            
             st.image(os.path.join("Images", current_item))
 #            next_item = st.form_submit_button("Next")
 #           if not next_item:
