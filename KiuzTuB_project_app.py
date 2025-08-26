@@ -201,6 +201,7 @@ if "clues4" in st.session_state:
                     str(st.session_state.confidence4),
                     st.session_state.clues4
                     ]
+    st.write(f"The output record is {output_array}")
     output_record = ",".join(output_array)
     encoded_content = base64.b64encode(output_record.encode("utf-8")).decode("utf-8")
 
