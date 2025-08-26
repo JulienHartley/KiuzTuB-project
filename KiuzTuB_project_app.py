@@ -101,16 +101,20 @@ if "final_images" not in st.session_state:
     while item3 == item1:  # keep generating a random number until it is different from item1
         item3 = random.randint(1, 5)
     st.write(f"The original items for this participant are {item1} and {item3}")
+
     #  now choose two items from the second 5 (the created comics)
     item2 = random.randint(6, 10)  # includes both 6 and 10
     item4 = item2
     while item4 == item2:  # keep generating a random number until it is different from item2
         item4 = random.randint(6, 10)
     st.write(f"The original items for this participant are {item2} and {item4}")
-    st.session_state.final_images[1] = [f"panels{item1}.png"]
-    st.session_state.final_images[2] = [f"panels{item2}.png"]
-    st.session_state.final_images[3] = [f"panels{item3}.png"]
-    st.session_state.final_images[4] = [f"panels{item4}.png"]
+
+    item1_panels = [f"panels{item1}.png"]
+    item2_panels = [f"panels{item2}.png"]
+    item3_panels = [f"panels{item3}.png"]
+    item4_panels = [f"panels{item4}.png"]
+
+    st.session_state.final_images = item1_panels + item2_panels + item3_panels + item4_panels
 
 # === Now Loop through the items
 # Initialize index in session state to 0
