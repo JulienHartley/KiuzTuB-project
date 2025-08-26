@@ -30,7 +30,7 @@ if "participant" not in st.session_state:
             participant = 1
     st.session_state.participant = participant
 
-# Now update the Participant.txt file with the number of this participant
+# === Now update the Participant.txt file with the number of this participant
     output_record = str(participant)
     encoded_content = base64.b64encode(output_record.encode("utf-8")).decode("utf-8")
 
@@ -60,7 +60,8 @@ if "participant" not in st.session_state:
         "sha": sha,
         "branch": branch
     }
-# write the update request
+
+    # write the update request
     update_response = requests.put(api_url, headers=headers, json=update_payload)
     if update_response.status_code == 200:
         st.success("✅ File updated successfully!")
@@ -70,6 +71,7 @@ if "participant" not in st.session_state:
 
     st.success(f"🧪 You are participant **{participant}**.")
 
+# === This section handles the instructions screen
 if "proceed" not in st.session_state:
     with st.form("instructions_form"):
         st.write("""
@@ -89,7 +91,7 @@ if "proceed" not in st.session_state:
         if not st.session_state.proceed:
             st.stop()
 
-# === Load Images ===
+# === This section determines the items for this participant; 2 from original comics + 2 from created ones
 if "final_images" not in st.session_state:
 
     #  first choose two items from the first 5 (the original comics)
@@ -109,21 +111,19 @@ if "final_images" not in st.session_state:
     st.session_state.final_images[3] = [f"panels{item3}.png"]
     st.session_state.final_images[4] = [f"panels{item4}.png"]
 
-# === Loop through each comic ===
-# Initialize index in session state
+# === Now Loop through the items
+# Initialize index in session state to 0
 if "item_index" not in st.session_state:
     st.session_state.item_index = 0
 
-item_number = st.session_state.item_index + 1
-item_number_str = str(item_number)
-
-# Show first item
+# Show each item and its questions in turn
 if "item_index" in st.session_state:
-    if st.session_state.item_index < 4:
+    st.session_state.item_index += 1
+    item_number_str = str(st.session_state.item_index)
+    if st.session_state.item_index < 5:
         with st.form(f"item_{item_number_str}"):
             current_item = st.session_state.final_images[st.session_state.item_index]
             st.image(os.path.join("Images", current_item))
-            st.session_state.item_index += 1
             next_item = st.form_submit_button("Next")
             if not next_item:
                 st.stop()
@@ -137,7 +137,7 @@ if "item_index" in st.session_state:
                             st.stop()
 
                 if "confidence{item_index}" not in st.session_state:
-                    with st.form("response_form2"):
+                    with st.form("confidence_form"):
                         confidence = st.selectbox(
                             "How confident do you feel about this on a scale of 1(low) to 10(certain)?",
                             ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"], key="confidence{item_index}")
@@ -146,7 +146,7 @@ if "item_index" in st.session_state:
                             st.stop()
 
                 if "clues{item_index}" not in st.session_state:
-                    with st.form("response_form3"):
+                    with st.form("clues form"):
                         st.write("### What clues (if any) did you use to reach your prediction? (enter up to 3)")
                         answer = st.text_input("What clues did you use?", key="clues{item_index}")
                         submit = st.form_submit_button("Submit")
