@@ -94,19 +94,19 @@ if "proceed" not in st.session_state:
 
 # === This section determines the items for this participant; 2 from original comics + 2 from created ones
 if "final_images" not in st.session_state:
-
+    st.write("""reached the loading of the items""")
     #  first choose two items from the first 5 (the original comics)
     item1 = random.randint(1, 5)  # includes both 1 and 5
     item3 = item1
     while item3 == item1:  # keep generating a random number until it is different from item1
         item3 = random.randint(1, 5)
-
+    st.write(f"The original items for this participant are {item1} and {item3}")
     #  now choose two items from the second 5 (the created comics)
     item2 = random.randint(6, 10)  # includes both 6 and 10
     item4 = item2
     while item4 == item2:  # keep generating a random number until it is different from item2
-        item3 = random.randint(6, 10)
-
+        item4 = random.randint(6, 10)
+    st.write(f"The original items for this participant are {item2} and {item4}")
     st.session_state.final_images[1] = [f"panels{item1}.png"]
     st.session_state.final_images[2] = [f"panels{item2}.png"]
     st.session_state.final_images[3] = [f"panels{item3}.png"]
