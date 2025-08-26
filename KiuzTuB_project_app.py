@@ -117,9 +117,9 @@ if "final_images" not in st.session_state:
     st.session_state.final_images = item1_panels + item2_panels + item3_panels + item4_panels
 
 # === Now Loop through the items, presenting the panels and questions for each
-# Initialize index in session state to 0
+# Initialize index in session state to -1, so that next time through it increments to 0
 if "item_index" not in st.session_state:
-    st.session_state.item_index = 0
+    st.session_state.item_index = -1
 
 # Show each item and its questions in turn
 if "item_index" in st.session_state:
@@ -127,11 +127,11 @@ if "item_index" in st.session_state:
     item_number_str = str(st.session_state.item_index)
     st.write(f"The item index is {st.session_state.item_index} ({item_number_str})")
 
-    if st.session_state.item_index < 5:
+    if st.session_state.item_index < 4:
         with st.form(f"item_{item_number_str}"):
             current_item = st.session_state.final_images[st.session_state.item_index]
             st.write(f"The image to be shown is {current_item}")
-            
+
             st.image(os.path.join("Images", current_item))
 #            next_item = st.form_submit_button("Next")
 #           if not next_item:
