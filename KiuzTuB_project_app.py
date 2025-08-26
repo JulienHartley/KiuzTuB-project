@@ -116,7 +116,7 @@ if "final_images" not in st.session_state:
 
     st.session_state.final_images = item1_panels + item2_panels + item3_panels + item4_panels
 
-# === Now Loop through the items
+# === Now Loop through the items, presenting the panels and questions for each
 # Initialize index in session state to 0
 if "item_index" not in st.session_state:
     st.session_state.item_index = 0
@@ -125,55 +125,63 @@ if "item_index" not in st.session_state:
 if "item_index" in st.session_state:
     st.session_state.item_index += 1
     item_number_str = str(st.session_state.item_index)
+    st.write(f"The item index is {st.session_state.item_index} ({item_number_str})")
+
     if st.session_state.item_index < 5:
         with st.form(f"item_{item_number_str}"):
             current_item = st.session_state.final_images[st.session_state.item_index]
             st.image(os.path.join("Images", current_item))
-            next_item = st.form_submit_button("Next")
-            if not next_item:
+#            next_item = st.form_submit_button("Next")
+#           if not next_item:
+#               st.stop()
+#           else:  # ask the questions that relate to the item
+#               if "answer{item_index}" not in st.session_state:
+#                   with st.form("response_form"):
+            st.write("""
+            
+            ### Please type your responses to the questions below ###
+            
+            """)
+            answer = st.text_input("What do you think happens next?", key="answer{item_index}")
+#            submit = st.form_submit_button("Submit")
+#                       if not submit:
+#                           st.stop()
+#
+#               if "confidence{item_index}" not in st.session_state:
+#                   with st.form("confidence_form"):
+            st.write("""
+            
+            """)
+            confidence = st.selectbox(
+                "How confident do you feel about this on a scale of 1(low) to 10(certain)?",
+                ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"], key="confidence{item_index}")
+#                        submit = st.form_submit_button("Submit")
+#                       if not submit:
+#                           st.stop()
+
+#               if "clues{item_index}" not in st.session_state:
+#                   with st.form("clues form"):
+            st.write("""
+     
+            """)
+            clues = st.text_input("What clues (if any) did you use to reach your prediction? (enter up to 3)",
+                                  key="clues{item_index}")
+            submit = st.form_submit_button("Submit")
+            if not submit:
                 st.stop()
-            else:  # ask the questions that relate to the item
-                if "answer{item_index}" not in st.session_state:
-                    with st.form("response_form"):
-                        st.write("### Please type your responses to the question below ")
-                        answer = st.text_input("What do you think happens next?", key="answer{item_index}")
-                        submit = st.form_submit_button("Submit")
-                        if not submit:
-                            st.stop()
 
-                if "confidence{item_index}" not in st.session_state:
-                    with st.form("confidence_form"):
-                        confidence = st.selectbox(
-                            "How confident do you feel about this on a scale of 1(low) to 10(certain)?",
-                            ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"], key="confidence{item_index}")
-                        submit = st.form_submit_button("Submit")
-                        if not submit:
-                            st.stop()
 
-                if "clues{item_index}" not in st.session_state:
-                    with st.form("clues form"):
-                        st.write("### What clues (if any) did you use to reach your prediction? (enter up to 3)")
-                        answer = st.text_input("What clues did you use?", key="clues{item_index}")
-                        submit = st.form_submit_button("Submit")
-                        if not submit:
-                            st.stop()
-
-# -----------------
-# st.write("participant ", st.session_state.participant, "age ", st.session_state.age)
-# st.write("gender ", st.session_state.gender, "type ", st.session_state.testtype)
-# st.write("answer ", st.session_state.answer, "confidence ", st.session_state.confidence)
-# ------------------
-# === Now need to write to GitHub files
-if "answer4" in st.session_state:
+# === This section writes the participant record to the GitHub file
+if "clues4" in st.session_state:
 
     # My GitHub info
-    token = st.secrets["github"]["token"]
-    repo = "JulienHartley/KiuzTuB"
+    github_token = st.secrets["GITHUB_TOKEN"]
+    repo = "JulienHartley/KiuzTuB-project"
     branch = "main"
 
     # === Save CSV
     filename = "Results/" + f"response_{st.session_state.participant}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
-# ........
+
     api_url = f"https://api.github.com/repos/{repo}/contents/{filename}"
     output_array = [str(st.session_state.participant),
                     str(st.session_state.age),
@@ -195,7 +203,7 @@ if "answer4" in st.session_state:
     encoded_content = base64.b64encode(output_record.encode("utf-8")).decode("utf-8")
 
     headers = {
-        "Authorization": f"token {token}",
+        "Authorization": f"token {github_token}",
         "Accept": "application/vnd.github+json"
     }
 
