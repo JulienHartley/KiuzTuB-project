@@ -174,7 +174,7 @@ if "item_index" in st.session_state:
 
 
 # === This section writes the participant record to the GitHub file
-if "clues4" in st.session_state:
+if "clues3" in st.session_state:
 
     # My GitHub info
     github_token = st.secrets["GITHUB_TOKEN"]
