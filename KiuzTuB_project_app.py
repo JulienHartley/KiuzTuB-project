@@ -144,7 +144,7 @@ if "item_index" in st.session_state:
             ### Please type your responses to the questions below ###
             
             """)
-            answer = st.text_input("What do you think happens next?", key="answer{item_index}")
+            answer = st.text_input("What do you think happens next?", key=f"answer{item_number_str}")
 #            submit = st.form_submit_button("Submit")
 #                       if not submit:
 #                           st.stop()
@@ -156,7 +156,7 @@ if "item_index" in st.session_state:
             """)
             confidence = st.selectbox(
                 "How confident do you feel about this on a scale of 1(low) to 10(certain)?",
-                ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"], key="confidence{item_index}")
+                ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"], key=f"confidence{item_number_str}")
 #                        submit = st.form_submit_button("Submit")
 #                       if not submit:
 #                           st.stop()
@@ -167,7 +167,7 @@ if "item_index" in st.session_state:
      
             """)
             clues = st.text_input("What clues (if any) did you use to reach your prediction? (enter up to 3)",
-                                  key="clues{item_index}")
+                                  key=f"clues{item_number_str}")
             submit = st.form_submit_button("Submit")
             if not submit:
                 st.stop()
