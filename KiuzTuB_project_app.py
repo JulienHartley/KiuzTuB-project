@@ -188,6 +188,9 @@ if "clues3" in st.session_state:
     output_array = [str(st.session_state.participant),
                     str(st.session_state.age),
                     st.session_state.gender,
+                    st.session_state.answer0,
+                    str(st.session_state.confidence0),
+                    st.session_state.clues0,
                     st.session_state.answer1,
                     str(st.session_state.confidence1),
                     st.session_state.clues1,
@@ -196,10 +199,7 @@ if "clues3" in st.session_state:
                     st.session_state.clues2,
                     st.session_state.answer3,
                     str(st.session_state.confidence3),
-                    st.session_state.clues3,
-                    st.session_state.answer4,
-                    str(st.session_state.confidence4),
-                    st.session_state.clues4
+                    st.session_state.clues3
                     ]
     st.write(f"The output record is {output_array}")
     output_record = ",".join(output_array)
