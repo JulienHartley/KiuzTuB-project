@@ -126,30 +126,32 @@ if "panel_index" in st.session_state:
                 st.stop()
 
     # Now elicit the answers to the questions
-    st.write("""
-            
-            ### Please type your responses to the questions below ###
-            
-            """)
+    with st.form("questions_form")
+        st.write("""
+                
+                ### Please type your responses to the questions below ###
+                
+                """)
 
-    st.session_state.answer = st.text_input("What do you think happens next?")
-    st.write("""
-            
-            """)
+        st.session_state.answer = st.text_input("What do you think happens next?")
+        st.write("""
+                
+                """)
 
-    st.session_state.confidence = st.selectbox(
-                "How confident do you feel about this on a scale of 1(low) to 10(certain)?",
-                ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"])
+        st.session_state.confidence = st.selectbox(
+                    "How confident do you feel about this on a scale of 1(low) to 10(certain)?",
+                    ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"])
 
-    st.write("""
-     
-            """)
+        st.write("""
+         
+                """)
 
-    st.session_state.clues = st.text_input(
-        "What clues (if any) did you use to reach your prediction? (enter up to 3 separated by ,)")
-    submit = st.form_submit_button("Submit")
-    if not submit:
-        st.stop()
+        st.session_state.clues = st.text_input(
+            "What clues (if any) did you use to reach your prediction? (enter up to 3 separated by ,)")
+
+        submit = st.form_submit_button("Submit")
+        if not submit:
+            st.stop()
 
 
 # === This section writes the participant record to the GitHub file
