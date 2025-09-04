@@ -80,10 +80,9 @@ if "proceed" not in st.session_state:
         
         The purpose of the experiment is to compare human prediction in comics with the prediction of an AI Chatbot
         
+        You’ll view five panels from a comic.
         
-        You’ll view four pages from comics in each of which the last panel has been removed.
-        
-        After each page you will be asked what you think happens next,
+        After seeing them you will be asked what you think happens next,
         how confident you are in your answer, and what clues you used (these may be textual or visual).
         
         All responses are anonymous.  
@@ -92,7 +91,7 @@ if "proceed" not in st.session_state:
         if not st.session_state.proceed:
             st.stop()
 
-# === This section determines the items for this participant; 2 from original comics + 2 from created ones
+# === This section determines which item this participant will see
 if "final_images" not in st.session_state:
 #    st.write("""reached the loading of the items""")
     #  first choose two items from the first 5 (the original comics)
