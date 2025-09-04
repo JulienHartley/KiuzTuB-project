@@ -126,7 +126,7 @@ if "panel_index" in st.session_state:
                 st.stop()
 
     # Now elicit the answers to the questions
-    with st.form("questions_form")
+    with st.form("questions_form"):
         st.write("""
                 
                 ### Please type your responses to the questions below ###
