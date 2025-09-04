@@ -3,7 +3,6 @@ import streamlit as st
 import os
 import base64  # to enable writing to GitHub repo
 import requests  # ditto
-import random
 
 from datetime import datetime
 
@@ -91,89 +90,70 @@ if "proceed" not in st.session_state:
         if not st.session_state.proceed:
             st.stop()
 
-# === This section determines which item this participant will see
+# === This section determines which of the 5 items this participant will see; this will be determined using base 5
+# === eg, participant 1 gets item 1, participant 9 gets item 5, etc
 if "final_images" not in st.session_state:
-#    st.write("""reached the loading of the items""")
-    #  first choose two items from the first 5 (the original comics)
-    item1 = random.randint(1, 5)  # includes both 1 and 5
-    item3 = item1
-    while item3 == item1:  # keep generating a random number until it is different from item1
-        item3 = random.randint(1, 5)
-#    st.write(f"The original items for this participant are {item1} and {item3}")
 
-    #  now choose two items from the second 5 (the created comics)
-    item2 = random.randint(6, 10)  # includes both 6 and 10
-    item4 = item2
-    while item4 == item2:  # keep generating a random number until it is different from item2
-        item4 = random.randint(6, 10)
-#    st.write(f"The created items for this participant are {item2} and {item4}")
+    item = (st.session_state.participant % 5) + 1
 
-    item1_panels = [f"panels{item1}.png"]
-    item2_panels = [f"panels{item2}.png"]
-    item3_panels = [f"panels{item3}.png"]
-    item4_panels = [f"panels{item4}.png"]
 
-    st.session_state.final_images = item1_panels + item2_panels + item3_panels + item4_panels
+# === Next, load the panels into an array
+    panel1 = [f"panel{item}_1.png"]
+    panel2 = [f"panel{item}_2.png"]
+    panel3 = [f"panel{item}_3.png"]
+    panel4 = [f"panel{item}_4.png"]
+    panel5 = [f"panel{item}_5.png"]
 
-# === Now Loop through the items, presenting the panels and questions for each
-# Initialize index in session state to -1, so that next time through it increments to 0
-if "item_index" not in st.session_state:
-    st.session_state.item_index = -1
+    st.session_state.final_images = panel1 + panel2 + panel3 + panel4 + panel5
 
-# Show each item and its questions in turn
-if "item_index" in st.session_state:
-    st.session_state.item_index += 1
-    item_number_str = str(st.session_state.item_index)
-#    st.write(f"The item index is {st.session_state.item_index} ({item_number_str})")
+# === Now Loop through the panels
+# Initialize index in session state to -1; then each time through it increments by 1
+if "panel_index" not in st.session_state:
+    st.session_state.panel_index = -1
 
-    if st.session_state.item_index < 4:
-        with st.form(f"item_{item_number_str}"):
-            current_item = st.session_state.final_images[st.session_state.item_index]
-    #        st.write(f"The image to be shown is {current_item}")
+# Increment the panel number by 1 and then show the panels (Note that the array index goes from 0 to 5)
+if "panel_index" in st.session_state:
+    st.session_state.panel_index += 1
+    panel_number_str = str(st.session_state.panel_index)
 
-            st.image(os.path.join("Images", current_item))
-#            next_item = st.form_submit_button("Next")
-#           if not next_item:
-#               st.stop()
-#           else:  # ask the questions that relate to the item
-#               if "answer{item_index}" not in st.session_state:
-#                   with st.form("response_form"):
-            st.write("""
+    # As long as panel_index is less tha 4, show the (next) panel until next is pressed
+    if st.session_state.panel_index < 4:
+        with st.form(f"item_{panel_number_str}"):
+            current_panel = st.session_state.final_images[st.session_state.panel_index]
+            st.image(os.path.join("Images", current_panel))
+            next_item = st.form_submit_button("Next")
+            if not next_item:
+                st.stop()
+
+    # Now elicit the answers to the questions
+    st.write("""
             
             ### Please type your responses to the questions below ###
             
             """)
-            answer = st.text_input("What do you think happens next?", key=f"answer{item_number_str}")
-#            submit = st.form_submit_button("Submit")
-#                       if not submit:
-#                           st.stop()
-#
-#               if "confidence{item_index}" not in st.session_state:
-#                   with st.form("confidence_form"):
-            st.write("""
+
+    st.session_state.answer = st.text_input("What do you think happens next?")
+    st.write("""
             
             """)
-            confidence = st.selectbox(
-                "How confident do you feel about this on a scale of 1(low) to 10(certain)?",
-                ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"], key=f"confidence{item_number_str}")
-#                        submit = st.form_submit_button("Submit")
-#                       if not submit:
-#                           st.stop()
 
-#               if "clues{item_index}" not in st.session_state:
-#                   with st.form("clues form"):
-            st.write("""
+    st.session_state.confidence = st.selectbox(
+                "How confident do you feel about this on a scale of 1(low) to 10(certain)?",
+                ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"])
+
+    st.write("""
      
             """)
-            clues = st.text_input("What clues (if any) did you use to reach your prediction? (enter up to 3)",
-                                  key=f"clues{item_number_str}")
-            submit = st.form_submit_button("Submit")
-            if not submit:
-                st.stop()
+
+    st.session_state.clues = st.text_input(
+        "What clues (if any) did you use to reach your prediction? (enter up to 3 separated by ,)")
+    submit = st.form_submit_button("Submit")
+    if not submit:
+        st.stop()
 
 
 # === This section writes the participant record to the GitHub file
-if "clues3" in st.session_state:
+if "clues" in st.session_state:
 
     # My GitHub info
     github_token = st.secrets["GITHUB_TOKEN"]
@@ -187,18 +167,9 @@ if "clues3" in st.session_state:
     output_array = [str(st.session_state.participant),
                     str(st.session_state.age),
                     st.session_state.gender,
-                    st.session_state.answer0,
-                    str(st.session_state.confidence0),
-                    st.session_state.clues0,
-                    st.session_state.answer1,
-                    str(st.session_state.confidence1),
-                    st.session_state.clues1,
-                    st.session_state.answer2,
-                    str(st.session_state.confidence2),
-                    st.session_state.clues2,
-                    st.session_state.answer3,
-                    str(st.session_state.confidence3),
-                    st.session_state.clues3
+                    st.session_state.answer,
+                    str(st.session_state.confidence),
+                    st.session_state.clues
                     ]
     # st.write(f"The output record is {output_array}")
     output_record = ",".join(output_array)
