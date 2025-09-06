@@ -107,6 +107,7 @@ if "cartoons" not in st.session_state:
 if "final_images" not in st.session_state:
     st.session_state.item = (st.session_state.participant % 5)
     panel_no = 0
+    st.session_state.final_images = []
     while panel_no < (st.session_state.cartoons[st.session_state.item][1] + 1):
         st.session_state.final_images = (st.session_state.final_images +
                                          [f"{st.session_state.cartoons[st.session_state.item][0]}_{panel_no}.png"])
