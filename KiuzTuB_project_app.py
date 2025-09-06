@@ -105,7 +105,7 @@ if "cartoons" not in st.session_state:
 # === if the images for this participant have not yet been loaded, select the cartoon based on the participant number
 # === and load the images into a session_state variable (final_images)
 if "final_images" not in st.session_state:
-    st.session_state.item = (st.session_state.participant % 5)
+    st.session_state.item = (st.session_state.participant % 5) - 1
     panel_no = 1
     st.session_state.final_images = []
     while panel_no < (st.session_state.cartoons[st.session_state.item][1] + 1):
@@ -176,6 +176,7 @@ if "clues" in st.session_state:
     output_array = [str(st.session_state.participant),
                     str(st.session_state.age),
                     st.session_state.gender,
+                    st.session_state.cartoons[st.session_state.item][0],
                     st.session_state.answer,
                     str(st.session_state.confidence),
                     st.session_state.clues
