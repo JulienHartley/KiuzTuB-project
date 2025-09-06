@@ -114,21 +114,21 @@ if "final_images" not in st.session_state:
         panel_no += 1
 
 # === Now Loop through the panels
-# Initialize index in session state to -1; thereafter each time through it increments by 1
+# Initialize index in session state to 0; thereafter each time through it increments by 1
 if "panel_index" not in st.session_state:
-    st.session_state.panel_index = -1
+    st.session_state.panel_index = 0
 
-# Increment the panel number by 1 and then show the panels (Note that the array index goes from 0 to 5)
+# Show the panel and then increment the index by 1 (Note that the array index goes from 0 to 5)
 if "panel_index" in st.session_state:
-    st.session_state.panel_index += 1
     panel_number_str = str(st.session_state.panel_index)
 
     # As long as panel_index is less the number of panels in the item, show the (next) panel
-    if st.session_state.panel_index < st.session_state.cartoons[st.session_state.item][1] - 1:
+    if st.session_state.panel_index < st.session_state.cartoons[st.session_state.item][1]:
         with st.form(f"item_{panel_number_str}"):
             current_panel = st.session_state.final_images[st.session_state.panel_index]
             st.image(os.path.join("Images", current_panel))
             next_item = st.form_submit_button("Next")
+            st.session_state.panel_index += 1
             if not next_item:
                 st.stop()
 
