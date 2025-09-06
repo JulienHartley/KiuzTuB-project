@@ -106,7 +106,7 @@ if "cartoons" not in st.session_state:
 # === and load the images into a session_state variable (final_images)
 if "final_images" not in st.session_state:
     st.session_state.item = (st.session_state.participant % 5)
-    panel_no = 0
+    panel_no = 1
     st.session_state.final_images = []
     while panel_no < (st.session_state.cartoons[st.session_state.item][1] + 1):
         st.session_state.final_images = (st.session_state.final_images +
