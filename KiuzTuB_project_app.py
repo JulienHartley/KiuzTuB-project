@@ -93,24 +93,24 @@ if "proceed" not in st.session_state:
 # === This section determines which of the 5 items this participant will see; this will be determined using base 5
 # === eg, participant 1 gets item 1, participant 9 gets item 5, etc
 
-# === Read the list of comic names and store them in a session_state variable
+# === Read the list of comic names and panel numbers and store them in a session_state variable
 if "cartoons" not in st.session_state:
     cartoons_file = "Cartoon_list.txt"
+    st.session_state.cartoons = []
     with open(cartoons_file, "r", encoding="utf-8") as in_f:
-        cartoon_names = [line.strip() for line in in_f]
-    st.session_state.cartoons = cartoon_names
+        for line in in_f:
+            cartoon_name, cartoon_panels = line.strip().split(",")  # split into 2 parts
+            st.session_state.cartoons.append((cartoon_name, int(cartoon_panels)))   # store as (string, int)
 
 # === if the images for this participant have not yet been loaded, select the cartoon based on the participant number
 # === and load the images into a session_state variable (final_images)
 if "final_images" not in st.session_state:
-    item = (st.session_state.participant % 5)
-    panel1 = [f"{cartoon_names[item]}_1.png"]
-    panel2 = [f"{cartoon_names[item]}_2.png"]
-    panel3 = [f"{cartoon_names[item]}_3.png"]
-    panel4 = [f"{cartoon_names[item]}_4.png"]
-    panel5 = [f"{cartoon_names[item]}_5.png"]
-
-    st.session_state.final_images = panel1 + panel2 + panel3 + panel4 + panel5
+    st.session_state.item = (st.session_state.participant % 5)
+    panel_no = 0
+    while panel_no < (st.session_state.cartoons[st.session_state.item][1] + 1):
+        st.session_state.final_images = (st.session_state.final_images +
+                                         [f"{st.session_state.cartoons[st.session_state.item][0]}_{panel_no}.png"])
+        panel_no += 1
 
 # === Now Loop through the panels
 # Initialize index in session state to -1; thereafter each time through it increments by 1
@@ -122,8 +122,8 @@ if "panel_index" in st.session_state:
     st.session_state.panel_index += 1
     panel_number_str = str(st.session_state.panel_index)
 
-    # As long as panel_index is less tha 4, show the (next) panel until next is pressed
-    if st.session_state.panel_index < 4:
+    # As long as panel_index is less the number of panels in the item, show the (next) panel
+    if st.session_state.panel_index < st.session_state.cartoons[st.session_state.item][1] - 1:
         with st.form(f"item_{panel_number_str}"):
             current_panel = st.session_state.final_images[st.session_state.panel_index]
             st.image(os.path.join("Images", current_panel))
