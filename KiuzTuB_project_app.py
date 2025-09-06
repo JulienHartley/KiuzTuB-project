@@ -79,7 +79,7 @@ if "proceed" not in st.session_state:
         
         The purpose of the experiment is to compare human prediction in comics with the prediction of an AI Chatbot
         
-        You’ll view five panels from a comic.
+        You’ll view a (small) number of panels from a comic.
         
         After seeing them you will be asked what you think happens next,
         how confident you are in your answer, and what clues you used (these may be textual or visual).

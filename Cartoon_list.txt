@@ -1,5 +1,5 @@
-pluto,6
-cat,5
+pluto,5
+cat,3
 superhero,5
 baseball,5
 bomb,5
