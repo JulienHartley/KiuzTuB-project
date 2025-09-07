@@ -155,7 +155,7 @@ if "panel_index" in st.session_state:
 
         st.session_state.clues = st.text_input(
             "What textual and/or visual clues (if any) did you use to reach your prediction?"
-            "(enter up to 3 separated by ,)")
+            " (enter up to 3 separated by ,)")
 
         submit = st.form_submit_button("Submit")
         if not submit:
