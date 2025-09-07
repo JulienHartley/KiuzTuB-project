@@ -81,7 +81,7 @@ if "proceed" not in st.session_state:
         
         You’ll view a (small) number of panels from a comic.
         
-        After seeing them you will be asked what you think happens next,
+        After seeing them you will be asked what you think will be shown on the next panel,
         how confident you are in your answer, and what clues you used (these may be textual or visual).
         
         All responses are anonymous.  
@@ -140,7 +140,7 @@ if "panel_index" in st.session_state:
                 
                 """)
 
-        st.session_state.answer = st.text_input("What do you think happens next?")
+        st.session_state.answer = st.text_input("What do you think the next panel will show?")
         st.write("""
                 
                 """)
@@ -154,7 +154,8 @@ if "panel_index" in st.session_state:
                 """)
 
         st.session_state.clues = st.text_input(
-            "What clues (if any) did you use to reach your prediction? (enter up to 3 separated by ,)")
+            "What textual and/or visual clues (if any) did you use to reach your prediction?"
+            "(enter up to 3 separated by ,)")
 
         submit = st.form_submit_button("Submit")
         if not submit:
