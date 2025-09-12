@@ -21,7 +21,7 @@ new_file_content = ""
 # Loop through each CSV file and read it and append its content to the consolidated_results content
 for file in csv_files:
     file_path = os.path.join(folder_path, file)
-#    print("file path:", file_path)
+    print("file path:", file_path)
 
 #   input_url = f"https://api.github.com/repos/{repo}/contents/{file_path}"
 #   response = requests.get(input_url, headers=headers)
@@ -33,7 +33,7 @@ for file in csv_files:
     with open(file_path, "r", encoding="utf-8") as in_f:
         content_data = in_f.readline()
 
-#   print("content data:", content_data)
+    print("content data:", content_data)
 
 # === Add this line to the output (existing_content) ===
     new_file_content = new_file_content + content_data + "\n"
