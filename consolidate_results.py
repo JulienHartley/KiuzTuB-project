@@ -1,15 +1,10 @@
 # import pandas as pd
 import os
-import streamlit as st
+# import streamlit as st
 import base64  # to enable writing to GitHub repo
 import requests  # ditto
 from datetime import datetime
 
-# My GitHub info
-github_token = st.secrets["GITHUB_TOKEN"]
-repo = "JulienHartley/KiuzTuB-project"
-branch = "main"
-headers = {"Authorization": f"token {github_token}", "Accept": "application/vnd.github+json"}
 
 # Set the folder path where the CSV files are located
 folder_path = "Results/"
@@ -43,19 +38,10 @@ for file in csv_files:
 # now encode the new file content for writing to the output file
 encoded_content = base64.b64encode(new_file_content.encode()).decode()
 
-# === Create api url for the consolidated results file
+# === create filename for the consolidated results file
 filename = "Results/" + f"Consolidated_results_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
-api_url = f"https://api.github.com/repos/{repo}/contents/{filename}"
 
-data = {
-    "message": f"Add {filename}",
-    "content": encoded_content,
-    "branch": branch
-}
 # put the content (data) into the file
-response = requests.put(api_url, headers=headers, json=data)
+with open(filename, "w") as f:
+    f.write(encoded_content)
 
-if response.status_code == 201:
-    print(f"File containing {number_of_files} lines created successfully!")
-else:
-    print(f"Error: {response.status_code} - {response.json()}")
