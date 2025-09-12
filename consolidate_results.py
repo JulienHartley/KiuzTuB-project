@@ -1,14 +1,15 @@
 # import pandas as pd
 import os
+import streamlit as st
 import base64  # to enable writing to GitHub repo
 import requests  # ditto
 from datetime import datetime
 
 # My GitHub info
-token = "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"
+github_token = st.secrets["GITHUB_TOKEN"]
 repo = "JulienHartley/KiuzTuB-project"
 branch = "main"
-headers = {"Authorization": f"token {token}", "Accept": "application/vnd.github+json"}
+headers = {"Authorization": f"token {github_token}", "Accept": "application/vnd.github+json"}
 
 # Set the folder path where the CSV files are located
 folder_path = "Results/"
