@@ -5,13 +5,13 @@ import requests  # ditto
 from datetime import datetime
 
 # My GitHub info
-token = "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"
-repo = "JulienHartley/KiuzTuB"
+token = "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"
+repo = "JulienHartley/KiuzTuB-project"
 branch = "main"
 headers = {"Authorization": f"token {token}", "Accept": "application/vnd.github+json"}
 
 # Set the folder path where the CSV files are located
-folder_path = "results/"
+folder_path = "Results/"
 number_of_files = 0
 # Get all filenames for files in the folder that start with "response"
 csv_files = [f for f in os.listdir(folder_path) if f.startswith("response")]
@@ -30,7 +30,7 @@ for file in csv_files:
 
     # get the content from the file
     with open(file_path, "r", encoding="utf-8") as in_f:
-       content_data = in_f.readline()
+        content_data = in_f.readline()
 
 #   print("content data:", content_data)
 
