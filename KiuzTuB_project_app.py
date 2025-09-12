@@ -35,7 +35,7 @@ if "participant" not in st.session_state:
 
     # My GitHub info
     # Get GitHub token from secrets
-    github_token = st.secrets["GITHUB_TOKEN"]
+    github_token = st.secrets["github"]["token"]
     repo = "JulienHartley/KiuzTuB-project"
     branch = "main"
 
@@ -166,7 +166,7 @@ if "panel_index" in st.session_state:
 if "clues" in st.session_state:
 
     # My GitHub info
-    github_token = st.secrets["GITHUB_TOKEN"]
+    github_token = st.secrets["github"]["token"]
     repo = "JulienHartley/KiuzTuB-project"
     branch = "main"
 
